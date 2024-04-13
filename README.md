@@ -1,8 +1,14 @@
 # 2DGS implementation based on GauStudio [beta version]
+<img alt="2dgs" src="assets/2dgs-teaser.jpeg" width="100%">
+
 ## Key Features
-* naive implementation for 2DGS by setting the third axis of scale to 0
-* naive implementation of distortion loss by minimize the gap between median depth and rendered depth
-* reconstruct mesh in one line using GauStudio
+
+1. **Simplified 2D Geometry Shader (2DGS) Implementation**: We set the third scale component of 3DGS to 0, to achieve the desired 2D effect without the need for a custom rasterizer. This allows our system to be compatible with a wide range of 3DGS-enabled renderers, providing greater flexibility and ease of integration.
+
+2. **Floater cleaning using simplified distortion loss**: We addresses the floater issues by minimizing the modified distortion loss, which is the gap between the median depth and the rendered depth
+
+3. **Streamlined Mesh Reconstruction with GauStudio**
+
 
 ## Install
 ```
