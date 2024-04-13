@@ -12,13 +12,14 @@
 import os
 import torch
 from random import randint
-from utils.loss_utils import l1_loss, ssim
+from utils.loss_utils import l1_loss, ssim, cos_loss
 from gaussian_renderer import render
 import sys
 from scene import Scene, GaussianModel
 from utils.general_utils import safe_state
 import uuid
 from tqdm import tqdm
+from utils.graphics_utils import normal_from_depth_image
 from argparse import ArgumentParser, Namespace
 from arguments import ModelParams, PipelineParams, OptimizationParams
 
@@ -64,11 +65,29 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
 
         render_pkg = render(viewpoint_cam, gaussians, pipe, bg)
         image, viewspace_point_tensor, visibility_filter, radii = render_pkg["render"], render_pkg["viewspace_points"], render_pkg["visibility_filter"], render_pkg["radii"]
+        rendered_depth = render_pkg["rendered_depth"][0]
+        rendered_median_depth = render_pkg["rendered_median_depth"][0]
+        rendered_final_opacity = render_pkg["rendered_final_opacity"][0]
 
         # Loss
         gt_image = viewpoint_cam.image.cuda().permute(2, 0, 1)
         Ll1 = l1_loss(image, gt_image)
         loss = (1.0 - opt.lambda_dssim) * Ll1 + opt.lambda_dssim * (1.0 - ssim(image, gt_image))
+        surface_mask = rendered_final_opacity > 0.5
+        
+        # normal_consistency loss
+        if surface_mask.sum() > 0.  and opt.lambda_normal_consistency > 0. and opt.normal_from_iter < iteration < opt.normal_until_iter:
+            render_normal = render_pkg["render_normal"]
+            rendered_depth_gradient = normal_from_depth_image(rendered_depth, viewpoint_cam.get_intrinsics().cuda(), 
+                                                            viewpoint_cam.get_extrinsics().cuda())[0].permute(2, 0, 1)
+            loss_normal = cos_loss(render_normal[:, surface_mask], rendered_depth_gradient[:, surface_mask])
+            loss += loss_normal * opt.lambda_normal_consistency
+                
+        # depth_distortion loss
+        if opt.lambda_depth_distortion > 0. and surface_mask.sum() > 0. and opt.depth_from_iter < iteration < opt.depth_until_iter:
+            consistency_loss = l1_loss(rendered_depth[surface_mask], rendered_median_depth[surface_mask])
+            loss += consistency_loss * opt.lambda_depth_distortion
+
         loss.backward()
 
         iter_end.record()
