@@ -14,6 +14,30 @@ import math
 from gaustudio_diff_gaussian_rasterization import GaussianRasterizationSettings, GaussianRasterizer
 from scene.gaussian_model import GaussianModel
 from utils.sh_utils import eval_sh
+import torch.nn.functional as F
+
+def build_rotation(r):
+    norm = torch.sqrt(r[:,0]*r[:,0] + r[:,1]*r[:,1] + r[:,2]*r[:,2] + r[:,3]*r[:,3])
+
+    q = r / norm[:, None]
+
+    R = torch.zeros((q.size(0), 3, 3), device='cuda')
+
+    r = q[:, 0]
+    x = q[:, 1]
+    y = q[:, 2]
+    z = q[:, 3]
+
+    R[:, 0, 0] = 1 - 2 * (y*y + z*z)
+    R[:, 0, 1] = 2 * (x*y - r*z)
+    R[:, 0, 2] = 2 * (x*z + r*y)
+    R[:, 1, 0] = 2 * (x*y + r*z)
+    R[:, 1, 1] = 1 - 2 * (x*x + z*z)
+    R[:, 1, 2] = 2 * (y*z - r*x)
+    R[:, 2, 0] = 2 * (x*z - r*y)
+    R[:, 2, 1] = 2 * (y*z + r*x)
+    R[:, 2, 2] = 1 - 2 * (x*x + y*y)
+    return R
 
 def render(viewpoint_camera, pc : GaussianModel, pipe, bg_color : torch.Tensor, scaling_modifier = 1.0, override_color = None):
     """
@@ -92,11 +116,36 @@ def render(viewpoint_camera, pc : GaussianModel, pipe, bg_color : torch.Tensor, 
         rotations = rotations,
         cov3D_precomp = cov3D_precomp)
 
+    rotations_mat = build_rotation(rotations)
+    scales = pc.get_scaling
+    normal = rotations_mat[..., 2]
+
+    # convert normal direction to the camera; calculate the normal in the camera coordinate
+    view_dir = means3D - viewpoint_camera.camera_center
+    normal   = normal * ((((view_dir * normal).sum(dim=-1) < 0) * 1 - 0.5) * 2)[...,None]
+
+    R_w2c = torch.tensor(viewpoint_camera.R.T).cuda().to(torch.float32)
+    normal = (R_w2c @ normal.transpose(0, 1)).transpose(0, 1)
+
+    render_normal, _, _, _, _ = rasterizer(
+        means3D = means3D,
+        means2D = means2D,
+        shs = None,
+        colors_precomp = normal,
+        opacities = opacity,
+        scales = scales,
+        rotations = rotations,
+        cov3D_precomp = cov3D_precomp)
+    render_normal = F.normalize(render_normal, dim = 0)                                                                                                                                                   
+
+    rendered_image = rendered_image + (1-rendered_final_opacity).repeat(3, 1, 1) * bg_color.unsqueeze(-1).unsqueeze(-1).repeat(1, rendered_image.size(1), rendered_image.size(2))
     # Those Gaussians that were frustum culled or had a radius of 0 were not visible.
     # They will be excluded from value updates used in the splitting criteria.
     return {"render": rendered_image,
             "rendered_depth": rendered_depth,
             "rendered_median_depth": rendered_median_depth,
+            "rendered_final_opacity": rendered_final_opacity,
             "viewspace_points": screenspace_points,
             "visibility_filter" : radii > 0,
+            "render_normal": render_normal,
             "radii": radii}
