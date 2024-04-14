@@ -9,6 +9,10 @@
 
 3. **Streamlined Mesh Reconstruction with GauStudio**
 
+## TODOs
+- [ ] **Resolved the critical issue outlined in https://github.com/hugoycj/2dgs-gaustudio/issues/1. The open-source version has some issues compared to our private implementation. It will take a few days to address them. Please check back in 2-3 days.**
+- [ ] Add a tutorial on how to use the DTU, BlendedMVS, and MobileBrick datasets for training
+- [ ] Improve training efficiency.
 
 ## Install
 ```
