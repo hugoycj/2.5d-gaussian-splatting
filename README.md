@@ -36,6 +36,21 @@ The results will be saved in `output/trained_result/point_cloud/iteration_{xxxx}
 ```
 gs-extract-mesh -m output/trained_result -o output/trained_result
 ```
-
+# Bitex
+If you found this library useful for your research, please consider citing:
+```
+@article{ye2024gaustudio,
+  title={GauStudio: A Modular Framework for 3D Gaussian Splatting and Beyond},
+  author={Ye, Chongjie and Nie, Yinyu and Chang, Jiahao and Chen, Yuantao and Zhi, Yihao and Han, Xiaoguang},
+  journal={arXiv preprint arXiv:2403.19632},
+  year={2024}
+}
+@article{huang20242d,
+  title={2D Gaussian Splatting for Geometrically Accurate Radiance Fields},
+  author={Huang, Binbin and Yu, Zehao and Chen, Anpei and Geiger, Andreas and Gao, Shenghua},
+  journal={arXiv preprint arXiv:2403.17888},
+  year={2024}
+}
+```
 # License
 This project is licensed under the Gaussian-Splatting License - see the LICENSE file for details.
