@@ -11,6 +11,7 @@
 
 ## TODOs
 - [x] **Resolved the critical issue outlined in https://github.com/hugoycj/2dgs-gaustudio/issues/1. The open-source version has some issues compared to our private implementation. It will take a few days to address them. Please check back in 2-3 days.**
+- [ ] Implemented distortion loss in 2DGS paper
 - [ ] Add a tutorial on how to use the DTU, BlendedMVS, and MobileBrick datasets for training
 - [ ] Add mask preparation script and mask loss
 - [ ] Improve mesh quality by integrating monocular prior similar to [dn-splatter](https://github.com/maturk/dn-splatter) and [gaussian_surfels](https://turandai.github.io/projects/gaussian_surfels/)
