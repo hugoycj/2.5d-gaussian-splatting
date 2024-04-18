@@ -12,6 +12,7 @@ dependencies:
   - torchaudio=0.12.1
   - torchvision=0.13.1
   - tqdm
+  - rembg
   - pip:
     - git+https://github.com/camenduru/simple-knn.git
     - git+https://github.com/GAP-LAB-CUHK-SZ/gaustudio.git
