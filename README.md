@@ -11,9 +11,9 @@
 
 ## TODOs
 - [x] **Resolved the critical issue outlined in https://github.com/hugoycj/2dgs-gaustudio/issues/1. The open-source version has some issues compared to our private implementation. It will take a few days to address them. Please check back in 2-3 days.**
-- [ ] Implemented distortion loss in 2DGS paper
+- [x] Add mask preparation script and mask loss
 - [ ] Add a tutorial on how to use the DTU, BlendedMVS, and MobileBrick datasets for training
-- [ ] Add mask preparation script and mask loss
+- [ ] Implemented distortion loss in 2DGS paper
 - [ ] Improve mesh quality by integrating monocular prior similar to [dn-splatter](https://github.com/maturk/dn-splatter) and [gaussian_surfels](https://turandai.github.io/projects/gaussian_surfels/)
 - [ ] Improve training efficiency.
 
@@ -31,9 +31,17 @@
 ```
 
 ## How to Use
+### Preprocessing
+```
+# generate mask
+python preprocess_mask.py --data <path to data>
+```
+### Training
 ```
 # 2DGS training
 pythont train.py -s <path to data> -m output/trained_result
+# 2DGS training with mask
+pythont train.py -s <path to data> -m output/trained_result -w_mask #make sure that `masks` dir exists under the data folder
 # naive 2DGS training without extra regularization
 python train.py -s <path to data>  -m output/trained_result --lambda_normal_consistency 0. --lambda_depth_distortion 0.
 ```
