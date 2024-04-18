@@ -75,6 +75,11 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         loss = (1.0 - opt.lambda_dssim) * Ll1 + opt.lambda_dssim * (1.0 - ssim(image, gt_image))
         surface_mask = rendered_final_opacity > 0.5
         
+        # mask loss
+        if viewpoint_cam.mask is not None and opt.mask_from_iter < iteration < opt.mask_until_iter:    
+            loss_mask = (~viewpoint_cam.mask * rendered_final_opacity).mean()
+            loss += loss_mask * opt.lambda_mask
+            surface_mask = torch.logical_and(surface_mask, viewpoint_cam.mask)
         # normal_consistency loss
         if surface_mask.sum() > 0.  and opt.lambda_normal_consistency > 0. and opt.normal_from_iter < iteration < opt.normal_until_iter:
             render_normal = render_pkg["render_normal"]

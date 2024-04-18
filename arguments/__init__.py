@@ -51,6 +51,7 @@ class ModelParams(ParamGroup):
         self._model_path = ""
         self._images = "images"
         self._dataset = "colmap"
+        self.w_mask = False
         self._resolution = -1
         self._white_background = False
         self.data_device = "cuda"
@@ -82,6 +83,9 @@ class OptimizationParams(ParamGroup):
         self.rotation_lr = 0.001
         self.percent_dense = 0.01
         self.lambda_dssim = 0.2
+        self.lambda_mask = 1.
+        self.mask_from_iter = 0
+        self.mask_until_iter = 15000
         self.lambda_normal_consistency = 0.05
         self.normal_from_iter = 7000
         self.normal_until_iter = 30_000
