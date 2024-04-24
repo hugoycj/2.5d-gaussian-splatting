@@ -83,7 +83,7 @@ class OptimizationParams(ParamGroup):
         self.rotation_lr = 0.001
         self.percent_dense = 0.01
         self.lambda_dssim = 0.2
-        self.lambda_mask = 1.
+        self.lambda_mask = 0.1
         self.mask_from_iter = 0
         self.mask_until_iter = 15000
         self.lambda_normal_consistency = 0.005
