@@ -78,8 +78,79 @@ pythont train.py --dataset neus -s <path to DTU data>/<model_id> -m output/DTU-n
 python train.py --dataset neus -s ./data/DTU-neus/dtu_scan105 -m output/DTU-neus/dtu_scan105 --w_mask
 ```
 
+### Training on BlendedMVS
+Download original [BlendedMVS data](https://github.com/YoYo000/BlendedMVS) which is in MVSNet input format.
+The data is organized as follows:
+```
+<model_id>                
+├── blended_images          
+│	├── 00000000.jpg        
+│	├── 00000000_masked.jpg        
+│	├── 00000001.jpg        
+│	├── 00000001_masked.jpg        
+│	└── ...                 
+├── cams                      
+│  	├── pair.txt           
+│  	├── 00000000_cam.txt    
+│  	├── 00000001_cam.txt    
+│  	└── ...                 
+└── rendered_depth_maps     
+  	├── 00000000.pfm        
+   	├── 00000001.pfm        
+   	└── ...                    
+```
+
+#### Running
+```
+# 2DGS training
+pythont train.py --dataset mvsnet -s <path to BlendedMVS data>/<model_id> -m output/BlendedMVS/<model_id>
+# e.g.
+python train.py --dataset mvsnet -s ./data/BlendedMVS/5a4a38dad38c8a075495b5d2 -m output/BlendedMVS/5a4a38dad38c8a075495b5d2
+```
 
 
+### Training on MobileBrick
+Download original [MobileBrick data](http://www.robots.ox.ac.uk/~victor/data/MobileBrick/MobileBrick_Mar23.zip).
+The data is organized as follows:
+```
+SEQUENCE_NAME
+├── arkit_depth (the confidence and depth maps provided by ARKit)
+|    ├── 000000_conf.png
+|    ├── 000000.png
+|    ├── ...
+├── gt_depth (The high-resolution depth maps projected from the aligned GT shape)
+|    ├── 000000.png
+|    ├── ...     
+├── image (the RGB images)
+|    ├── 000000.jpg
+|    ├── ...
+├── mask (object foreground mask projected from the aligned GT shape)
+|    ├── 000000.png
+|    ├── ...
+├── intrinsic (3x3 intrinsic matrix of each image)
+|    ├── 000000.txt
+|    ├── ...
+├── pose (4x4 transformation matrix from camera to world of each image)
+|    ├── 000000.txt
+|    ├── ...
+├── mesh
+|    ├── gt_mesh.ply
+├── visibility_mask.npy (the visibility mask to be used for evaluation)
+├── cameras.npz (processed camera poses using the format of NeuS)       
+```
+
+#### Running
+```
+# 2DGS training
+pythont train.py --dataset mobilebrick -s <path to MobileBrick data>/<model_id> -m output/MobileBrick/<model_id>
+# e.g.
+python train.py --dataset mobilebrick -s ./data/MobileBrick/test/aston -m output/MobileBrick/aston
+
+# 2DGS training with mask
+pythont train.py --dataset mobilebrick -s <path to MobileBrick data>/<model_id> -m output/MobileBrick/<model_id> --w_mask
+# e.g.
+python train.py --dataset mobilebrick -s ./data/MobileBrick/test/aston -m output/MobileBrick/aston --w_mask
+```
 
 ## Mesh Extraction
 ```
