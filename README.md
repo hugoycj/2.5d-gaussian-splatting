@@ -30,22 +30,56 @@
 !python setup.py develop
 ```
 
-## How to Use
-### Preprocessing
+## Training
+### Training on Colmap Dataset
+#### Prepare Data
 ```
 # generate mask
 python preprocess_mask.py --data <path to data>
 ```
-### Training
+#### Running
 ```
 # 2DGS training
 pythont train.py -s <path to data> -m output/trained_result
 # 2DGS training with mask
-pythont train.py -s <path to data> -m output/trained_result -w_mask #make sure that `masks` dir exists under the data folder
+pythont train.py -s <path to data> -m output/trained_result --w_mask #make sure that `masks` dir exists under the data folder
 # naive 2DGS training without extra regularization
 python train.py -s <path to data>  -m output/trained_result --lambda_normal_consistency 0. --lambda_depth_distortion 0.
 ```
 The results will be saved in `output/trained_result/point_cloud/iteration_{xxxx}/point_cloud.ply`. 
+
+### Training on DTU
+#### Prepare Data
+Download preprocessed DTU data provided by [NeuS](https://www.dropbox.com/sh/w0y8bbdmxzik3uk/AAAaZffBiJevxQzRskoOYcyja?e=1&dl=0)
+
+The data is organized as follows:
+```
+<model_id>
+|-- cameras_xxx.npz    # camera parameters
+|-- image
+    |-- 000000.png        # target image for each view
+    |-- 000001.png
+    ...
+|-- mask
+    |-- 000000.png        # target mask each view (For unmasked setting, set all pixels as 255)
+    |-- 000001.png
+    ...
+```
+#### Running
+```
+# 2DGS training
+pythont train.py --dataset neus -s <path to DTU data>/<model_id> -m output/DTU-neus/<model_id>
+# e.g.
+python train.py --dataset neus -s ./data/DTU-neus/dtu_scan105 -m output/DTU-neus/dtu_scan105
+
+# 2DGS training with mask
+pythont train.py --dataset neus -s <path to DTU data>/<model_id> -m output/DTU-neus/<model_id> --w_mask
+# e.g.
+python train.py --dataset neus -s ./data/DTU-neus/dtu_scan105 -m output/DTU-neus/dtu_scan105 --w_mask
+```
+
+
+
 
 ## Mesh Extraction
 ```
