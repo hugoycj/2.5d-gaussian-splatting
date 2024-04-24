@@ -9,10 +9,11 @@
 
 3. **Streamlined Mesh Reconstruction with GauStudio**
 
-## TODOs
-- [x] **Resolved the critical issue outlined in https://github.com/hugoycj/2dgs-gaustudio/issues/1. The open-source version has some issues compared to our private implementation. It will take a few days to address them. Please check back in 2-3 days.**
-- [x] Add mask preparation script and mask loss
-- [ ] Add a tutorial on how to use the DTU, BlendedMVS, and MobileBrick datasets for training
+## Updates
+- [x] (**14/04/2024**) Release a baseline version for 2DGS
+- [x] (**16/04/2024**) Resolved the critical issue outlined in https://github.com/hugoycj/2dgs-gaustudio/issues/1.
+- [x] (**18/04/2024**) Add mask preparation script and mask loss
+- [x] (**24/04/2024**) Add a tutorial on how to use the DTU, BlendedMVS, and MobileBrick datasets for training
 - [ ] Implemented distortion loss in 2DGS paper
 - [ ] Improve mesh quality by integrating monocular prior similar to [dn-splatter](https://github.com/maturk/dn-splatter) and [gaussian_surfels](https://turandai.github.io/projects/gaussian_surfels/)
 - [ ] Improve training efficiency.
@@ -73,9 +74,9 @@ pythont train.py --dataset neus -s <path to DTU data>/<model_id> -m output/DTU-n
 python train.py --dataset neus -s ./data/DTU-neus/dtu_scan105 -m output/DTU-neus/dtu_scan105
 
 # 2DGS training with mask
-pythont train.py --dataset neus -s <path to DTU data>/<model_id> -m output/DTU-neus/<model_id> --w_mask
+pythont train.py --dataset neus -s <path to DTU data>/<model_id> -m output/DTU-neus-w_mask/<model_id> --w_mask
 # e.g.
-python train.py --dataset neus -s ./data/DTU-neus/dtu_scan105 -m output/DTU-neus/dtu_scan105 --w_mask
+python train.py --dataset neus -s ./data/DTU-neus/dtu_scan105 -m output/DTU-neus-w_mask/dtu_scan105 --w_mask
 ```
 
 ### Training on BlendedMVS
@@ -147,9 +148,9 @@ pythont train.py --dataset mobilebrick -s <path to MobileBrick data>/<model_id> 
 python train.py --dataset mobilebrick -s ./data/MobileBrick/test/aston -m output/MobileBrick/aston
 
 # 2DGS training with mask
-pythont train.py --dataset mobilebrick -s <path to MobileBrick data>/<model_id> -m output/MobileBrick/<model_id> --w_mask
+pythont train.py --dataset mobilebrick -s <path to MobileBrick data>/<model_id> -m output/MobileBrick-w_mask/<model_id> --w_mask
 # e.g.
-python train.py --dataset mobilebrick -s ./data/MobileBrick/test/aston -m output/MobileBrick/aston --w_mask
+python train.py --dataset mobilebrick -s ./data/MobileBrick/test/aston -m output/MobileBrick-w_mask/aston --w_mask
 ```
 
 ## Mesh Extraction
