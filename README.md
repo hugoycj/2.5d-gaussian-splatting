@@ -1,17 +1,15 @@
-# 2.5DGS - 2DGS implementation based on GauStudio [beta version]
+# 2.5DGS - Rasterize 2D Gaussian with 3DGS rasterizer
 ## Key Features
 1. **Naive 2DGS**: We set the third scale component of 3DGS to 0, to achieve the desired 2D effect without the need for a custom rasterizer. This allows our system to be compatible with a wide range of 3DGS-enabled renderers, providing greater flexibility and ease of integration.
-
 2. **Simplified distortion loss for floater cleaning**: We addresses the floater issues by minimizing the modified distortion loss
-
-3. **Streamlined Mesh Reconstruction with GauStudio**
+3. **Streamlined Mesh Reconstruction with [GauStudio](https://github.com/GAP-LAB-CUHK-SZ/gaustudio)**
 
 ## Updates
 - [x] (**14/04/2024**) Release a baseline version for 2DGS
-- [x] (**16/04/2024**) Resolved the critical issue outlined in https://github.com/hugoycj/2dgs-gaustudio/issues/1.
+- [x] (**16/04/2024**) Resolved the critical issue outlined in https://github.com/hugoycj/2.5d-gaussian-splatting/issues/1.
 - [x] (**18/04/2024**) Add mask preparation script and mask loss
 - [x] (**24/04/2024**) Add a tutorial on how to use the DTU, BlendedMVS, and MobileBrick datasets for training
-- [x] (**27/04/2024**) Implemented simplified distortion loss (Latest Version [GauStudio Rasterizer](https://github.com/GAP-LAB-CUHK-SZ/gaustudio/tree/master/submodules/gaustudio-diff-gaussian-rasterization) is needed)
+- [x] (**27/04/2024**) Implemented simplified distortion loss (Latest Version [GauStudio Gaussian Rasterizer](https://github.com/GAP-LAB-CUHK-SZ/gaustudio/tree/master/submodules/gaustudio-diff-gaussian-rasterization) is needed)
 - [ ] Enhance 2DGS geometry by integrating a monocular prior similar to [dn-splatter](https://github.com/maturk/dn-splatter) and [gaussian_surfels](https://turandai.github.io/projects/gaussian_surfels/)
 - [ ] Improve mesh extraction quality by fusing the depth at the intersected point
 
