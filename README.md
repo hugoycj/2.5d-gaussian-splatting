@@ -1,11 +1,8 @@
 # 2DGS implementation based on GauStudio [beta version]
-<img alt="2dgs" src="assets/2dgs-teaser.jpeg" width="100%">
-
 ## Key Features
+1. **Naive 2DGS**: We set the third scale component of 3DGS to 0, to achieve the desired 2D effect without the need for a custom rasterizer. This allows our system to be compatible with a wide range of 3DGS-enabled renderers, providing greater flexibility and ease of integration.
 
-1. **Simplified 2D Geometry Shader (2DGS) Implementation**: We set the third scale component of 3DGS to 0, to achieve the desired 2D effect without the need for a custom rasterizer. This allows our system to be compatible with a wide range of 3DGS-enabled renderers, providing greater flexibility and ease of integration.
-
-2. **Floater cleaning using simplified distortion loss**: We addresses the floater issues by minimizing the modified distortion loss, which is the gap between the median depth and the rendered depth
+2. **Simplified distortion loss for floater cleaning**: We addresses the floater issues by minimizing the modified distortion loss
 
 3. **Streamlined Mesh Reconstruction with GauStudio**
 
@@ -14,9 +11,29 @@
 - [x] (**16/04/2024**) Resolved the critical issue outlined in https://github.com/hugoycj/2dgs-gaustudio/issues/1.
 - [x] (**18/04/2024**) Add mask preparation script and mask loss
 - [x] (**24/04/2024**) Add a tutorial on how to use the DTU, BlendedMVS, and MobileBrick datasets for training
-- [ ] Implemented distortion loss in 2DGS paper
+- [x] (**27/04/2024**) Implemented simplified distortion loss (Latest Version [GauStudio Rasterizer](https://github.com/GAP-LAB-CUHK-SZ/gaustudio/tree/master/submodules/gaustudio-diff-gaussian-rasterization) is needed)
 - [ ] Improve mesh quality by integrating monocular prior similar to [dn-splatter](https://github.com/maturk/dn-splatter) and [gaussian_surfels](https://turandai.github.io/projects/gaussian_surfels/)
 - [ ] Improve training efficiency.
+
+## Implementation
+### Naive 2DGS
+We initialize the third component of the 3DGS's scale to  log(0), which effectively sets it to negative infinity (log(0)). Although log(0) is mathematically undefined, the subsequent exponential activation function (exp) maps negative infinity to 0. This means that after the initialization and activation, the third scale component becomes zero.
+
+During optimization, the gradients for this third scale component are not explicitly stopped. However, **since the activation function (exp) is applied, any changes to the pre-activation value (negative infinity) will still result in a zero output after the activation.**
+
+Consequently, the third scale component remains zero throughout the optimization process, effectively zeroing out the scaling along that axis.
+
+### Simplified distortion loss
+The original distortion loss is defined as $\sum_{i}\sum_{j} w_i w_j |z_i - z_j|$. To calculate the distortion loss, a custom rasterizer is needed for computing the distortion map. To simplify the implementation, we approximate the original distortion loss by considering only the dominant weight. Our assumption is that if $j \neq \operatorname{argmax}(w_j)$, then $w_i \times w_j \approx 0$, since one of the weights is not the maximum weight. Then, we can write the distortion loss in the form of:
+$$
+\sum_{i}\sum_{j} w_i w_j |z_i - z_j| \\
+\approx \sum_{i} w_i w_j |z_i - z_j|, \quad j = \operatorname{argmax}(w_j) \\
+ = w_j \sum_{i} w_i |z_i - z_j|
+$$
+Using the definitions $\text{Depth} = \sum_{i} w_i z_i$ and $\text{Opacity} = \sum_{i} w_i$, the simplified distortion loss becomes:
+$$
+w_j * |\text{Depth} - \text{Opacity} * z_j|
+$$
 
 ## Install
 ```
