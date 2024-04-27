@@ -25,12 +25,15 @@ Consequently, the third scale component remains zero throughout the optimization
 
 ### Simplified distortion loss
 The original distortion loss is defined as $\sum_{i}\sum_{j} w_i w_j |z_i - z_j|$. To calculate the distortion loss, a custom rasterizer is needed for computing the distortion map. To simplify the implementation, we approximate the original distortion loss by considering only the dominant weight. Our assumption is that if $j \neq argmax(w_j)$, then $w_i \times w_j \approx 0$, since one of the weights is not the maximum weight. Then, we can write the distortion loss in the form of:
+
 $$
 \sum_{i}\sum_{j} w_i w_j |z_i - z_j| \\
-\approx \sum_{i} w_i w_j |z_i - z_j|, \quad j = \operatorname{argmax}(w_j) \\
+\approx \sum_{i} w_i w_j |z_i - z_j|, \quad j = argmax(w_j) \\
  = w_j \sum_{i} w_i |z_i - z_j|
 $$
+
 Using the definitions $\text{Depth} = \sum_{i} w_i z_i$ and $\text{Opacity} = \sum_{i} w_i$, the simplified distortion loss becomes:
+
 $$
 w_j * |\text{Depth} - \text{Opacity} * z_j|
 $$
