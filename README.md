@@ -1,4 +1,4 @@
-# 2DGS implementation based on GauStudio [beta version]
+# 2.5DGS - 2DGS implementation based on GauStudio [beta version]
 ## Key Features
 1. **Naive 2DGS**: We set the third scale component of 3DGS to 0, to achieve the desired 2D effect without the need for a custom rasterizer. This allows our system to be compatible with a wide range of 3DGS-enabled renderers, providing greater flexibility and ease of integration.
 
