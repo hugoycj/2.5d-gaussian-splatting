@@ -12,8 +12,8 @@
 - [x] (**18/04/2024**) Add mask preparation script and mask loss
 - [x] (**24/04/2024**) Add a tutorial on how to use the DTU, BlendedMVS, and MobileBrick datasets for training
 - [x] (**27/04/2024**) Implemented simplified distortion loss (Latest Version [GauStudio Rasterizer](https://github.com/GAP-LAB-CUHK-SZ/gaustudio/tree/master/submodules/gaustudio-diff-gaussian-rasterization) is needed)
-- [ ] Improve mesh quality by integrating monocular prior similar to [dn-splatter](https://github.com/maturk/dn-splatter) and [gaussian_surfels](https://turandai.github.io/projects/gaussian_surfels/)
-- [ ] Improve training efficiency.
+- [ ] Enhance 2DGS geometry by integrating a monocular prior similar to [dn-splatter](https://github.com/maturk/dn-splatter) and [gaussian_surfels](https://turandai.github.io/projects/gaussian_surfels/)
+- [ ] Improve mesh extraction quality by fusing the depth at the intersected point
 
 ## Implementation
 ### Naive 2DGS
@@ -24,7 +24,7 @@ During optimization, the gradients for this third scale component are not explic
 Consequently, the third scale component remains zero throughout the optimization process, effectively zeroing out the scaling along that axis.
 
 ### Simplified distortion loss
-The original distortion loss is defined as $\sum_{i}\sum_{j} w_i w_j |z_i - z_j|$. To calculate the distortion loss, a custom rasterizer is needed for computing the distortion map. To simplify the implementation, we approximate the original distortion loss by considering only the dominant weight. Our assumption is that if $j \neq \operatorname{argmax}(w_j)$, then $w_i \times w_j \approx 0$, since one of the weights is not the maximum weight. Then, we can write the distortion loss in the form of:
+The original distortion loss is defined as $\sum_{i}\sum_{j} w_i w_j |z_i - z_j|$. To calculate the distortion loss, a custom rasterizer is needed for computing the distortion map. To simplify the implementation, we approximate the original distortion loss by considering only the dominant weight. Our assumption is that if $j \neq argmax(w_j)$, then $w_i \times w_j \approx 0$, since one of the weights is not the maximum weight. Then, we can write the distortion loss in the form of:
 $$
 \sum_{i}\sum_{j} w_i w_j |z_i - z_j| \\
 \approx \sum_{i} w_i w_j |z_i - z_j|, \quad j = \operatorname{argmax}(w_j) \\
