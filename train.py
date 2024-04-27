@@ -67,6 +67,7 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         image, viewspace_point_tensor, visibility_filter, radii = render_pkg["render"], render_pkg["viewspace_points"], render_pkg["visibility_filter"], render_pkg["radii"]
         rendered_depth = render_pkg["rendered_depth"][0]
         rendered_median_depth = render_pkg["rendered_median_depth"][0]
+        rendered_median_weight = render_pkg["rendered_median_depth"][1]
         rendered_final_opacity = render_pkg["rendered_final_opacity"][0]
 
         # Loss
@@ -90,8 +91,9 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
                 
         # depth_distortion loss
         if opt.lambda_depth_distortion > 0. and surface_mask.sum() > 0. and opt.depth_from_iter < iteration < opt.depth_until_iter:
-            consistency_loss = l1_loss(rendered_depth[surface_mask], rendered_median_depth[surface_mask])
-            loss += consistency_loss * opt.lambda_depth_distortion
+            distortion_loss = rendered_median_weight * torch.abs(rendered_depth - rendered_final_opacity * rendered_median_depth)
+            distortion_loss = (distortion_loss * surface_mask).sum() / surface_mask.sum()
+            loss += distortion_loss * opt.lambda_depth_distortion
 
         loss.backward()
 
