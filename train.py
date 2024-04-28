@@ -84,6 +84,9 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         # normal_consistency loss
         if surface_mask.sum() > 0.  and opt.lambda_normal_consistency > 0. and opt.normal_from_iter < iteration < opt.normal_until_iter:
             render_normal = render_pkg["render_normal"]
+            if viewpoint_cam.mask is not None:
+                opacity_map = torch.where(~viewpoint_cam.mask, torch.ones_like(rendered_final_opacity), rendered_final_opacity)
+                rendered_depth = rendered_depth / opacity_map
             rendered_depth_gradient = normal_from_depth_image(rendered_depth, viewpoint_cam.intrinsics.cuda(), 
                                                             viewpoint_cam.extrinsics.cuda())[0].permute(2, 0, 1)
             loss_normal = cos_loss(render_normal[:, surface_mask], rendered_depth_gradient[:, surface_mask])
