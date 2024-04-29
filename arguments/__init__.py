@@ -86,7 +86,7 @@ class OptimizationParams(ParamGroup):
         self.lambda_mask = 0.1
         self.mask_from_iter = 0
         self.mask_until_iter = 15000
-        self.lambda_normal_consistency = 0.
+        self.lambda_normal_consistency = 0.05
         self.normal_from_iter = 7000
         self.normal_until_iter = 30_000
         self.lambda_depth_distortion = 0.005
