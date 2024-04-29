@@ -94,7 +94,7 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
                                                             viewpoint_cam.extrinsics.cuda())[0].permute(2, 0, 1)
             if viewpoint_cam.normal is not None:
                 gt_normal = viewpoint_cam.normal
-                loss_normal = cos_loss(render_normal[:, surface_mask], gt_normal[:, surface_mask]) + cos_loss(render_normal[:, surface_mask], gt_normal[:, surface_mask])
+                loss_normal = cos_loss(render_normal[:, surface_mask], gt_normal[:, surface_mask]) + cos_loss(rendered_depth_gradient[:, surface_mask], gt_normal[:, surface_mask])
             else:
                 loss_normal = cos_loss(render_normal[:, surface_mask], rendered_depth_gradient[:, surface_mask])
             loss += loss_normal * opt.lambda_normal_consistency
