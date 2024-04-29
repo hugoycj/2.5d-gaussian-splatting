@@ -46,6 +46,27 @@ class Scene:
                                             "resolution":resolution_scales[0], "data_device":"cuda", \
                                             "eval": False})
         _dataset.export(os.path.join(self.model_path, "cameras.json"))
+        
+        if args.w_normal_prior:
+            print("Loading Normal Prior model")
+            import torch
+            from tqdm import tqdm
+            import copy
+            normal_predictor = torch.hub.load("./DSINE-hub", "DSINE", source='local')
+            print("Preprocessing normal prior")
+
+            new_cameras = []
+            for _camera in tqdm(_dataset.all_cameras, desc="Processing cameras", unit="cam"):
+                _image = _camera.image  # [h, w, 3]
+                with torch.no_grad():
+                    _normal = normal_predictor.infer_tensor(_image.permute(2, 0, 1).unsqueeze(0)).squeeze(0)
+                new_normal = -_normal
+                new_camera = copy.deepcopy(_camera)
+                new_camera.normal = new_normal
+                new_cameras.append(new_camera)
+            _dataset.all_cameras = new_cameras
+            del normal_predictor
+
         print("Loading Training Cameras")
         self.train_cameras[resolution_scales[0]] = _dataset.all_cameras
         print("Loading Test Cameras")

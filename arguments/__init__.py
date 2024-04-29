@@ -52,6 +52,7 @@ class ModelParams(ParamGroup):
         self._images = "images"
         self._dataset = "colmap"
         self.w_mask = False
+        self.w_normal_prior = False
         self._resolution = -1
         self._white_background = False
         self.data_device = "cuda"
