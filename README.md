@@ -10,7 +10,7 @@
 - [x] (**18/04/2024**) Add mask preparation script and mask loss
 - [x] (**24/04/2024**) Add a tutorial on how to use the DTU, BlendedMVS, and MobileBrick datasets for training
 - [x] (**27/04/2024**) Implemented simplified distortion loss (Latest Version [GauStudio Gaussian Rasterizer](https://github.com/GAP-LAB-CUHK-SZ/gaustudio/tree/master/submodules/gaustudio-diff-gaussian-rasterization) is needed)
-- [ ] Enhance 2DGS geometry by integrating a monocular prior similar to [dn-splatter](https://github.com/maturk/dn-splatter) and [gaussian_surfels](https://turandai.github.io/projects/gaussian_surfels/)
+- [x] (**30/04/2024**) Enhance 2DGS geometry by integrating a monocular prior similar to [dn-splatter](https://github.com/maturk/dn-splatter) and [gaussian_surfels](https://turandai.github.io/projects/gaussian_surfels/)
 - [ ] Improve mesh extraction quality by fusing the depth at the intersected point
 
 ## Implementation
@@ -62,6 +62,8 @@ python preprocess_mask.py --data <path to data>
 ```
 # 2DGS training
 pythont train.py -s <path to data> -m output/trained_result
+# 2DGS training with normal prior
+pythont train.py -s <path to data> -m output/trained_result --w_normal_prior
 # 2DGS training with mask
 pythont train.py -s <path to data> -m output/trained_result --w_mask #make sure that `masks` dir exists under the data folder
 # naive 2DGS training without extra regularization
