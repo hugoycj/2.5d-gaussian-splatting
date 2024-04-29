@@ -53,13 +53,13 @@ class Scene:
             from tqdm import tqdm
             import copy
             normal_predictor = torch.hub.load("./DSINE-hub", "DSINE", source='local')
-            print("Preprocessing normal prior")
 
             new_cameras = []
-            for _camera in tqdm(_dataset.all_cameras, desc="Processing cameras", unit="cam"):
-                _image = _camera.image  # [h, w, 3]
+            for _camera in tqdm(_dataset.all_cameras, desc="Preprocessing normal prior", unit="cam"):
+                _image = _camera.image.permute(2, 0, 1).unsqueeze(0)  # [h, w, 3]
+                _intrins = _camera.intrinsics.unsqueeze(0).to("cuda")
                 with torch.no_grad():
-                    _normal = normal_predictor.infer_tensor(_image.permute(2, 0, 1).unsqueeze(0)).squeeze(0)
+                    _normal = normal_predictor.infer_tensor(_image, intrins=_intrins).squeeze(0)
                 new_normal = -_normal
                 new_camera = copy.deepcopy(_camera)
                 new_camera.normal = new_normal
