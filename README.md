@@ -1,9 +1,9 @@
-# 2.5DGS - Rasterize 2D Gaussian with 3DGS rasterizer
+# 2.5DGS: Enabling 2D Gaussian Splatting with 3D Rasterizers
 <img width="1744" alt="image" src="https://github.com/hugoycj/2.5d-gaussian-splatting/assets/40767265/810f05d7-a940-4353-ae16-b4260281245e">
 
 ## Key Features
-1. **Naive 2DGS**: We set the third scale component of 3DGS to 0, to achieve the desired 2D effect without the need for a custom rasterizer. This allows our system to be compatible with a wide range of 3DGS-enabled renderers, providing greater flexibility and ease of integration.
-2. **Simplified distortion loss for floater cleaning**: We addresses the floater issues by minimizing the modified distortion loss
+1. **2.5D Gaussian Splatting (2.5DGS)**: This approach simplifies 3D Gaussian Splatting (3DGS) by setting the third scale component to zero, achieving the desired 2D effect similar to [gaussian_surfels](https://turandai.github.io/projects/gaussian_surfels/). The key advantage is that 2.5DGS retains the benefits of 2DGS while ensuring compatibility with existing 3DGS renderers, without the need for a custom rasterizer.
+2. **Floater Cleaning via Plug-and-Play Distortion Loss**: We proposed a simplified distortion loss to tackle floater artifacts, enabling seamless integration with diverse Gaussian Splatting Method like Mip-Splatting and GaussianPro, without requiring distortion map calculations in CUDA rasterizers.
 3. **Streamlined Mesh Reconstruction with [GauStudio](https://github.com/GAP-LAB-CUHK-SZ/gaustudio)**
 
 ## Updates
@@ -12,18 +12,18 @@
 - [x] (**18/04/2024**) Add mask preparation script and mask loss
 - [x] (**24/04/2024**) Add a tutorial on how to use the DTU, BlendedMVS, and MobileBrick datasets for training
 - [x] (**27/04/2024**) Implemented simplified distortion loss (Latest Version [GauStudio Gaussian Rasterizer](https://github.com/GAP-LAB-CUHK-SZ/gaustudio/tree/master/submodules/gaustudio-diff-gaussian-rasterization) is needed)
-- [x] (**30/04/2024**) Enhance 2DGS geometry by integrating a monocular prior similar to [dn-splatter](https://github.com/maturk/dn-splatter) and [gaussian_surfels](https://turandai.github.io/projects/gaussian_surfels/)
+- [x] (**30/04/2024**) Enhance 2DGS geometry by integrating a monocular prior similar to [dn-splatter](https://github.com/maturk/dn-splatter) 
 - [ ] Improve mesh extraction quality by fusing the depth at the intersected point
 
 ## Implementation
-### Naive 2DGS
+###  2.5D Gaussian Splatting (2.5DGS)
 We initialize the third component of the 3DGS's scale to  log(0), which effectively sets it to negative infinity (log(0)). Although log(0) is mathematically undefined, the subsequent exponential activation function (exp) maps negative infinity to 0. This means that after the initialization and activation, the third scale component becomes zero.
 
 During optimization, the gradients for this third scale component are not explicitly stopped. However, **since the activation function (exp) is applied, any changes to the pre-activation value (negative infinity) will still result in a zero output after the activation.**
 
 Consequently, the third scale component remains zero throughout the optimization process, effectively zeroing out the scaling along that axis.
 
-### Simplified distortion loss
+### Plug-and-Play Distortion Loss
 The original distortion loss is defined as $\sum_{i}\sum_{j} w_i w_j |z_i - z_j|$. To calculate the distortion loss, a custom rasterizer is needed for computing the distortion map. To simplify the implementation, we approximate the original distortion loss by considering only the dominant weight. Our assumption is that if $j \neq argmax(w_j)$, then $w_i \times w_j \approx 0$, since one of the weights is not the maximum weight. Then, we can write the distortion loss in the form of:
 
 $$
@@ -62,13 +62,13 @@ python preprocess_mask.py --data <path to data>
 ```
 #### Running
 ```
-# 2DGS training
+# 2.5DGS training
 pythont train.py -s <path to data> -m output/trained_result
-# 2DGS training with normal prior
+# 2.5DGS training with normal prior
 pythont train.py -s <path to data> -m output/trained_result --w_normal_prior
-# 2DGS training with mask
+# 2.5DGS training with mask
 pythont train.py -s <path to data> -m output/trained_result --w_mask #make sure that `masks` dir exists under the data folder
-# naive 2DGS training without extra regularization
+# naive 2.5DGS training without extra regularization
 python train.py -s <path to data>  -m output/trained_result --lambda_normal_consistency 0. --lambda_depth_distortion 0.
 ```
 The results will be saved in `output/trained_result/point_cloud/iteration_{xxxx}/point_cloud.ply`. 
@@ -92,12 +92,12 @@ The data is organized as follows:
 ```
 #### Running
 ```
-# 2DGS training
+# 2.5DGS training
 pythont train.py --dataset neus -s <path to DTU data>/<model_id> -m output/DTU-neus/<model_id>
 # e.g.
 python train.py --dataset neus -s ./data/DTU-neus/dtu_scan105 -m output/DTU-neus/dtu_scan105
 
-# 2DGS training with mask
+# 2.5DGS training with mask
 pythont train.py --dataset neus -s <path to DTU data>/<model_id> -m output/DTU-neus-w_mask/<model_id> --w_mask
 # e.g.
 python train.py --dataset neus -s ./data/DTU-neus/dtu_scan105 -m output/DTU-neus-w_mask/dtu_scan105 --w_mask
@@ -127,7 +127,7 @@ The data is organized as follows:
 
 #### Running
 ```
-# 2DGS training
+# 2.5DGS training
 pythont train.py --dataset mvsnet -s <path to BlendedMVS data>/<model_id> -m output/BlendedMVS/<model_id>
 # e.g.
 python train.py --dataset mvsnet -s ./data/BlendedMVS/5a4a38dad38c8a075495b5d2 -m output/BlendedMVS/5a4a38dad38c8a075495b5d2
@@ -166,12 +166,12 @@ SEQUENCE_NAME
 
 #### Running
 ```
-# 2DGS training
+# 2.5DGS training
 pythont train.py --dataset mobilebrick -s <path to MobileBrick data>/<model_id> -m output/MobileBrick/<model_id>
 # e.g.
 python train.py --dataset mobilebrick -s ./data/MobileBrick/test/aston -m output/MobileBrick/aston
 
-# 2DGS training with mask
+# 2.5DGS training with mask
 pythont train.py --dataset mobilebrick -s <path to MobileBrick data>/<model_id> -m output/MobileBrick-w_mask/<model_id> --w_mask
 # e.g.
 python train.py --dataset mobilebrick -s ./data/MobileBrick/test/aston -m output/MobileBrick-w_mask/aston --w_mask
