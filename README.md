@@ -1,4 +1,6 @@
 # 2.5DGS - Rasterize 2D Gaussian with 3DGS rasterizer
+<img width="1744" alt="image" src="https://github.com/hugoycj/2.5d-gaussian-splatting/assets/40767265/810f05d7-a940-4353-ae16-b4260281245e">
+
 ## Key Features
 1. **Naive 2DGS**: We set the third scale component of 3DGS to 0, to achieve the desired 2D effect without the need for a custom rasterizer. This allows our system to be compatible with a wide range of 3DGS-enabled renderers, providing greater flexibility and ease of integration.
 2. **Simplified distortion loss for floater cleaning**: We addresses the floater issues by minimizing the modified distortion loss
@@ -179,6 +181,16 @@ python train.py --dataset mobilebrick -s ./data/MobileBrick/test/aston -m output
 ```
 gs-extract-mesh -m output/trained_result -o output/trained_result
 ```
+
+# Related repos
+You may be interested in checking out the following repositories related to 2D Gaussian splatting and surfel representations:
+1. **[2d-gaussian-splatting](https://github.com/hbb1/2d-gaussian-splatting)**: Repository represents a scene with a set of 2D oriented disks (surface elements) and rasterizes the surfels with perspective-correct differentiable rasterization.
+2. **[gaussian-surfels](https://turandai.github.io/projects/gaussian_surfels/index.html)**: Sses a surfel representation and improves surface reconstruction with normal priors.
+3. **[gaussian-opacity-field](https://github.com/autonomousvision/gaussian-opacity-fields)**: Extracts a mesh from a large tetrahedral volume with Delaunay triangulation, allowing meshing in the background.
+4. **[2dgs-non-official](https://github.com/will-zzy/2dgs-non-official)**: A non-official implementation of 2DGS, including forward and backward processes with CUDA acceleration.
+5. **[2D-surfel-gaussian](https://github.com/TimSong412/2D-surfel-gaussian/tree/main)**: Another non-official implementation of 2DGS with CUDA acceleration.
+6. **[diff-gaussian-rasterization-2dgs](https://github.com/Yubel426/diff-gaussian-rasterization/tree/2dgs)**: Yet another non-official implementation of 2DGS with CUDA acceleration.
+
 # Bitex
 If you found this library useful for your research, please consider citing:
 ```
