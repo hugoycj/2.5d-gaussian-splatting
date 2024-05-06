@@ -63,11 +63,11 @@ python preprocess_mask.py --data <path to data>
 #### Running
 ```
 # 2.5DGS training
-pythont train.py -s <path to data> -m output/trained_result
+python train.py -s <path to data> -m output/trained_result
 # 2.5DGS training with normal prior
-pythont train.py -s <path to data> -m output/trained_result --w_normal_prior
+python train.py -s <path to data> -m output/trained_result --w_normal_prior
 # 2.5DGS training with mask
-pythont train.py -s <path to data> -m output/trained_result --w_mask #make sure that `masks` dir exists under the data folder
+python train.py -s <path to data> -m output/trained_result --w_mask #make sure that `masks` dir exists under the data folder
 # naive 2.5DGS training without extra regularization
 python train.py -s <path to data>  -m output/trained_result --lambda_normal_consistency 0. --lambda_depth_distortion 0.
 ```
