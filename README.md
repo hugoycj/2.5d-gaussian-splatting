@@ -167,12 +167,12 @@ SEQUENCE_NAME
 #### Running
 ```
 # 2.5DGS training
-pythont train.py --dataset mobilebrick -s <path to MobileBrick data>/<model_id> -m output/MobileBrick/<model_id>
+python train.py --dataset mobilebrick -s <path to MobileBrick data>/<model_id> -m output/MobileBrick/<model_id>
 # e.g.
 python train.py --dataset mobilebrick -s ./data/MobileBrick/test/aston -m output/MobileBrick/aston
 
 # 2.5DGS training with mask
-pythont train.py --dataset mobilebrick -s <path to MobileBrick data>/<model_id> -m output/MobileBrick-w_mask/<model_id> --w_mask
+python train.py --dataset mobilebrick -s <path to MobileBrick data>/<model_id> -m output/MobileBrick-w_mask/<model_id> --w_mask
 # e.g.
 python train.py --dataset mobilebrick -s ./data/MobileBrick/test/aston -m output/MobileBrick-w_mask/aston --w_mask
 ```
