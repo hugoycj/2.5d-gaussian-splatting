@@ -85,9 +85,9 @@ class Scene:
             pcd = models.make("general_pcd")
             if args.dataset != "colmap":
                 if args.w_mask:
-                    initializer_config = {"name":'colmap', "workspace_dir":os.path.join(args.source_path, 'colmap-w_mask')}
+                    initializer_config = {"name":'loftr', "workspace_dir":os.path.join(args.source_path, 'loftr-w_mask')}
                 else:
-                    initializer_config = {"name":'colmap', "workspace_dir":os.path.join(args.source_path, 'colmap')}
+                    initializer_config = {"name":'loftr', "workspace_dir":os.path.join(args.source_path, 'loftr')}
             else:
                 initializer_config = {"name":'colmap', "workspace_dir":args.source_path}
             initializer = initializers.make(initializer_config)

@@ -85,23 +85,18 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         if surface_mask.sum() > 0.  and opt.lambda_normal_consistency > 0. and opt.normal_from_iter < iteration < opt.normal_until_iter:
             render_normal = render_pkg["render_normal"]
             
-            # TODO: Fix the nan bug
-            # if viewpoint_cam.mask is not None:
-            #     opacity_map = torch.where(~viewpoint_cam.mask, torch.ones_like(rendered_final_opacity), rendered_final_opacity)
-            #     rendered_depth = rendered_depth / opacity_map
-            
             rendered_depth_gradient = normal_from_depth_image(rendered_depth, viewpoint_cam.intrinsics.cuda(), 
                                                             viewpoint_cam.extrinsics.cuda())[0].permute(2, 0, 1)
+            rendered_depth_gradient = rendered_depth_gradient * rendered_final_opacity.detach()
+            loss_normal = cos_loss(render_normal[:, surface_mask], rendered_depth_gradient[:, surface_mask])
             if viewpoint_cam.normal is not None:
-                gt_normal = viewpoint_cam.normal
-                loss_normal = cos_loss(render_normal[:, surface_mask], gt_normal[:, surface_mask]) + cos_loss(rendered_depth_gradient[:, surface_mask], gt_normal[:, surface_mask])
-            else:
-                loss_normal = cos_loss(render_normal[:, surface_mask], rendered_depth_gradient[:, surface_mask])
+                gt_normal = viewpoint_cam.normal * rendered_final_opacity.detach()
+                loss_normal += cos_loss(rendered_depth_gradient[:, surface_mask], gt_normal[:, surface_mask])
             loss += loss_normal * opt.lambda_normal_consistency
                 
         # depth_distortion loss
         if opt.lambda_depth_distortion > 0. and surface_mask.sum() > 0. and opt.depth_from_iter < iteration < opt.depth_until_iter:
-            distortion_loss = rendered_median_weight * torch.abs(rendered_depth - rendered_final_opacity * rendered_median_depth)
+            distortion_loss = rendered_median_weight * torch.abs(rendered_depth - rendered_final_opacity.detach() * rendered_median_depth)
             distortion_loss = (distortion_loss * surface_mask).sum() / surface_mask.sum()
             loss += distortion_loss * opt.lambda_depth_distortion
 
